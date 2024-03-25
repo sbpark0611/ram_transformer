@@ -1,0 +1,71 @@
+seed: 10
+
+env:
+  maze_size: 4
+  num_maze: -1
+  max_episode_steps: 128
+  target_reward: 1.0
+  per_step_reward: 0.0
+  num_labels: 16
+  render_mode: null
+  no_duplication: True
+  seed: 10
+  maps: null
+  n_envs: 64
+  epn: True
+  norm_reward: True
+  norm_obs: False
+
+ppo:
+  batch_size: 64
+  n_steps: 128
+  n_epochs: 3
+  gamma: 0.95
+  gae_lambda: 0.95
+  max_grad_norm: 1.0
+  ent_coef: 0
+  normalize_advantage: True
+  verbose: 1
+
+optim:
+  total_timesteps: 500_000_000
+  linear_schedule: True
+  learning_rate: 1e-4
+  clip_range: 0.2
+
+logger:
+  upload_to_wandb: False
+  run_dir:
+  proj_name:
+  group_name: GTRxL
+
+model:
+  rnn_act_ftn: "tanh"
+  num_labels: 16
+  n_a: 5
+  d_rnn: 128
+  d_model: 128
+  d_embed: 64
+  n_head: 4
+  d_head: 32
+  d_inner: 512
+  ffn_act_ftn: "relu"
+  alpha: 1.0
+  beta: 1.0
+  div_val: 4
+  pre_lnorm: true
+  n_layer: 2
+  mem_len: 128
+  ext_len: 0
+  tgt_len: 128
+  clamp_len: 0
+  same_length: false
+  attn_type: 1
+  dropout: 0.1
+  dropatt: 0.0
+  correction: false
+  init: "normal"
+  init_range: 0.01
+  proj_init_std: 0.01
+  init_std: 0.02
+  layer_norm_epsilon: 1e-5

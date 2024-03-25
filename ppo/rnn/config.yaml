@@ -1,0 +1,53 @@
+seed: 10
+
+env:
+  maze_size: 4
+  num_maze: -1
+  max_episode_steps: 128
+  target_reward: 1.0
+  per_step_reward: 0.0
+  num_labels: 16
+  render_mode: null
+  no_duplication: True
+  seed: 10
+  maps: null
+  n_envs: 128
+  epn: True
+  norm_reward: True
+  norm_obs: False
+
+ppo:
+  batch_size: 128
+  n_steps: 128
+  n_epochs: 5
+  gamma: 0.95
+  gae_lambda: 0.95
+  max_grad_norm: 0.5
+  ent_coef: 0.001
+  normalize_advantage: True
+  verbose: 1
+
+optim:
+  total_timesteps: 500_000_000
+  linear_schedule: True
+  learning_rate: 1e-4
+  clip_range: 0.2
+
+logger:
+  upload_to_wandb: False
+  run_dir:
+  proj_name:
+  group_name: LSTM
+
+model:
+  ortho_init: True
+  log_std_init: 0.0
+  full_std: True
+  use_expln: False
+  squash_output: False
+  share_features_extractor: True
+  normalize_images: True
+  lstm_hidden_size: 64
+  n_lstm_layers: 1
+  shared_lstm: True
+  enable_critic_lstm: False
