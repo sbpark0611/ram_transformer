@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH -J normal_cpu
+#SBATCH -J radial_arm_maze
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 1
-#SBATCH -p jepyc
+#SBATCH -p normal_cpu
 #SBATCH -o %x.out
 #SBATCH -e %x.err
 #SBATCH -D /proj/internal_group/dscig/kdkyum/workdir/radial_arm_maze
