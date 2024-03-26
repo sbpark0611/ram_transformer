@@ -14,6 +14,9 @@ module load cudatoolkit/11.7
 __conda_setup="$('/opt/ibs_lib/apps/anaconda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 eval "$__conda_setup"
 unset __conda_setup
+
+conda info --envs
+
 conda activate ram2
 export WANDB_MODE=offline
 export PYTHONPATH='.'
