@@ -11,6 +11,9 @@
 module load anaconda3/2020.11
 module load cudatoolkit/10.2
 
+__conda_setup="$('/opt/olaf/anaconda3/2020.11/GNU/4.8/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+eval "$__conda_setup"
+unset __conda_setup
 conda activate pydreamer
 export WANDB_MODE=offline
 export PYTHONPATH='.'
