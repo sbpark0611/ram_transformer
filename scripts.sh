@@ -1,9 +1,8 @@
 #!/bin/bash
-#SBATCH -J radial_arm_maze
+#SBATCH -J normal_cpu
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 1
-#sbatch --gpus=1
 #SBATCH -p jepyc
 #SBATCH -o %x.out
 #SBATCH -e %x.err
