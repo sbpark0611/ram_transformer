@@ -16,6 +16,7 @@ eval "$__conda_setup"
 unset __conda_setup
 
 conda activate /proj/internal_group/dscig/kdkyum/workdir/conda_envs/ram
+
 export WANDB_MODE=offline
 export PYTHONPATH='.'
 
