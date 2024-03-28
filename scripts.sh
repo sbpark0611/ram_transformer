@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J radial_arm_maze
+#SBATCH -J ram_10
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 1
@@ -16,7 +16,6 @@ eval "$__conda_setup"
 unset __conda_setup
 
 conda activate /proj/internal_group/dscig/kdkyum/workdir/conda_envs/ram
-which python
 
 export WANDB_MODE=offline
 export PYTHONPATH='.'
