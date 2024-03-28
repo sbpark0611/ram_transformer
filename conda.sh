@@ -11,5 +11,8 @@
 module load anaconda/23.09.0
 module load cudatoolkit/11.7
 
-conda create -n ram
-y
+conda config --append envs_dir /proj/internal_group/dscig/kdkyum/workdir/radial_arm_maze
+
+conda env list
+
+conda info --envs

@@ -15,9 +15,7 @@ __conda_setup="$('/opt/ibs_lib/apps/anaconda/bin/conda' 'shell.bash' 'hook' 2> /
 eval "$__conda_setup"
 unset __conda_setup
 
-conda info --envs
-
-conda activate ram2
+conda activate /proj/internal_group/dscig/kdkyum/workdir/conda_envs/ram
 export WANDB_MODE=offline
 export PYTHONPATH='.'
 
