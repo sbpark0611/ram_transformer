@@ -283,6 +283,10 @@ class RadialArmMaze(gym.Env):
     @property
     def position(self):
         pos = self._labels[self._position]
+
+        if self._position[1] == self._maze_size - 1:
+            pos = self._labels[0, self._maze_size - 1]
+
         if self._episode_steps >= self._max_episode_steps // 2:
             # 1. Position of goal and the label of position move to the opposite site
             if self._reverse_mode == 1 and self._position in [self._goal, self._set_opposite_position(self._goal)]:

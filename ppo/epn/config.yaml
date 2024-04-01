@@ -2,7 +2,7 @@ env:
   maze_size: 3
   num_arms: 3
   num_maze: -1
-  max_episode_steps: 128
+  max_episode_steps: 256
   target_reward: 1.0
   per_step_reward: 0.0
   num_labels: 16
@@ -35,12 +35,12 @@ epn:
 optim:
   total_timesteps: 500_000_000
   linear_schedule: True
-  learning_rate: 0.00002
+  learning_rate: 0.00004
   clip_range: 0.2
 
 logger:
   upload_to_wandb: False
-  run_dir:
+  run_dir: 
   proj_name: radial_arm_maze
   group_name: EPN
 
