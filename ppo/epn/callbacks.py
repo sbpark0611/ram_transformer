@@ -357,7 +357,7 @@ def evaluate_policy(
             deterministic=deterministic,
         )
         new_observations, rewards, dones, infos = env.step(actions.flatten())
-        if current_step >= 128:   # half of max episode steps
+        if current_step >= 64:
             reversal_rewards += rewards > 0
         current_rewards += rewards
         current_lengths += 1
