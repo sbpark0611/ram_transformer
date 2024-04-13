@@ -1,0 +1,90 @@
+wandb_version: 1
+
+env:
+  desc: null
+  value:
+    maze_size: 3
+    num_arms: 3
+    num_maze: -1
+    max_episode_steps: 128
+    target_reward: 1.0
+    per_step_reward: 0.0
+    num_labels: 16
+    render_mode: null
+    no_duplication: true
+    seed: 10
+    maps: null
+    n_envs: 128
+    epn: true
+    norm_reward: true
+    norm_obs: false
+ppo:
+  desc: null
+  value:
+    batch_size: 128
+    n_steps: 128
+    n_epochs: 5
+    gamma: 0.95
+    gae_lambda: 0.95
+    max_grad_norm: 1.0
+    ent_coef: 0.001
+    normalize_advantage: true
+    verbose: 1
+epn:
+  desc: null
+  value:
+    embedding_size: 16
+    num_heads: 1
+    hidden_size: 64
+    num_iterations: 4
+optim:
+  desc: null
+  value:
+    total_timesteps: 500000000
+    linear_schedule: true
+    learning_rate: 2.0e-05
+    clip_range: 0.2
+logger:
+  desc: null
+  value:
+    upload_to_wandb: false
+    run_dir: null
+    proj_name: radial_arm_maze
+    group_name: EPN
+seed:
+  desc: null
+  value: 10
+_wandb:
+  desc: null
+  value:
+    code_path: code/train_epn_ram.py
+    python_version: 3.10.2
+    cli_version: 0.15.8
+    framework: huggingface
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1712890596.08312
+    t:
+      1:
+      - 1
+      - 2
+      - 3
+      - 50
+      - 55
+      2:
+      - 1
+      - 2
+      - 3
+      - 11
+      - 49
+      - 50
+      - 55
+      3:
+      - 16
+      - 23
+      - 35
+      4: 3.10.2
+      5: 0.15.8
+      8:
+      - 4
+      - 5

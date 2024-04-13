@@ -1,0 +1,142 @@
+diff --git a/envs/__pycache__/__init__.cpython-310.pyc b/envs/__pycache__/__init__.cpython-310.pyc
+index a7a16a4..5468326 100644
+Binary files a/envs/__pycache__/__init__.cpython-310.pyc and b/envs/__pycache__/__init__.cpython-310.pyc differ
+diff --git a/envs/__pycache__/radial_arm_maze.cpython-310.pyc b/envs/__pycache__/radial_arm_maze.cpython-310.pyc
+index 9f768db..15380e8 100644
+Binary files a/envs/__pycache__/radial_arm_maze.cpython-310.pyc and b/envs/__pycache__/radial_arm_maze.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/__init__.cpython-310.pyc b/ppo/epn/__pycache__/__init__.cpython-310.pyc
+index 95c712c..41b9609 100644
+Binary files a/ppo/epn/__pycache__/__init__.cpython-310.pyc and b/ppo/epn/__pycache__/__init__.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/buffers.cpython-310.pyc b/ppo/epn/__pycache__/buffers.cpython-310.pyc
+index 58baaa6..3ad924d 100644
+Binary files a/ppo/epn/__pycache__/buffers.cpython-310.pyc and b/ppo/epn/__pycache__/buffers.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/callbacks.cpython-310.pyc b/ppo/epn/__pycache__/callbacks.cpython-310.pyc
+index 30ca5f4..dd974d7 100644
+Binary files a/ppo/epn/__pycache__/callbacks.cpython-310.pyc and b/ppo/epn/__pycache__/callbacks.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/epn.cpython-310.pyc b/ppo/epn/__pycache__/epn.cpython-310.pyc
+index 2b1236c..893d64b 100644
+Binary files a/ppo/epn/__pycache__/epn.cpython-310.pyc and b/ppo/epn/__pycache__/epn.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/model.cpython-310.pyc b/ppo/epn/__pycache__/model.cpython-310.pyc
+index 449d40c..187cdfb 100644
+Binary files a/ppo/epn/__pycache__/model.cpython-310.pyc and b/ppo/epn/__pycache__/model.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/policies.cpython-310.pyc b/ppo/epn/__pycache__/policies.cpython-310.pyc
+index 4bbc1e0..86fd12a 100644
+Binary files a/ppo/epn/__pycache__/policies.cpython-310.pyc and b/ppo/epn/__pycache__/policies.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/type_aliases.cpython-310.pyc b/ppo/epn/__pycache__/type_aliases.cpython-310.pyc
+index 5d755de..04eb339 100644
+Binary files a/ppo/epn/__pycache__/type_aliases.cpython-310.pyc and b/ppo/epn/__pycache__/type_aliases.cpython-310.pyc differ
+diff --git a/ppo/epn/callbacks.py b/ppo/epn/callbacks.py
+index 8a5c1f3..69177f0 100644
+--- a/ppo/epn/callbacks.py
++++ b/ppo/epn/callbacks.py
+@@ -155,7 +155,7 @@ class EvalCallback(EventCallback):
+             # Reset success rate buffer
+             self._is_success_buffer = []
+ 
+-            episode_rewards, episode_lengths, num_steps2goal, episode_reversal_rewards = evaluate_policy(
++            episode_rewards, episode_lengths, num_steps2goal = evaluate_policy(
+                 self.model,
+                 self.eval_env,
+                 n_eval_episodes=self.n_eval_episodes,
+@@ -188,7 +188,6 @@ class EvalCallback(EventCallback):
+                 )
+ 
+             mean_reward, std_reward = np.mean(episode_rewards), np.std(episode_rewards)
+-            reversal_mean_reward, reversal_std_reward = np.mean(episode_reversal_rewards), np.std(episode_reversal_rewards)
+             mean_ep_length, std_ep_length = np.mean(episode_lengths), np.std(
+                 episode_lengths
+             )
+@@ -203,7 +202,6 @@ class EvalCallback(EventCallback):
+                 print(f"Avg. steps to goal: {self.evaluations_steps2goal}")
+             # Add to current Logger
+             self.logger.record(f"{self.prefix}/mean_reward", float(mean_reward))
+-            self.logger.record(f"{self.prefix}/reversal_mean_reward", float(reversal_mean_reward))
+             self.logger.record(f"{self.prefix}/mean_ep_length", mean_ep_length)
+ 
+             if len(self._is_success_buffer) > 0:
+@@ -214,7 +212,7 @@ class EvalCallback(EventCallback):
+ 
+             # Dump log so the evaluation results are printed with the correct timestep
+             self.logger.record(
+-                f"{self.prefix}/total_timesteps", self.num_timesteps, exclude="tensorboard"
++                "time/total_timesteps", self.num_timesteps, exclude="tensorboard"
+             )
+ 
+             plt.plot(np.arange(len(num_steps2goal)) + 1, num_steps2goal)
+@@ -222,7 +220,7 @@ class EvalCallback(EventCallback):
+             plt.ylabel("Avg. No. of steps to goal")
+             figure = plt.gcf()
+             self.logger.record(
+-                f"{self.prefix}/steps2goal",
++                "trajectory/steps2goal",
+                 Figure(figure, close=True),
+                 exclude=("stdout", "log", "json", "csv"),
+             )
+@@ -326,7 +324,6 @@ def evaluate_policy(
+ 
+     n_envs = env.num_envs
+     episode_rewards = []
+-    episode_reversal_rewards = []
+     episode_lengths = []
+ 
+     episode_counts = np.zeros(n_envs, dtype="int")
+@@ -344,9 +341,6 @@ def evaluate_policy(
+     episode_starts = np.ones((env.num_envs,), dtype=bool)
+     num_steps2goal = []
+     _last_episode_starts = episode_starts
+-
+-    current_step = 0
+-    reversal_rewards = np.zeros(n_envs)
+     while (episode_counts < episode_count_targets).any():
+         if _last_episode_starts.any():
+             rollout_buffer.reset()
+@@ -357,11 +351,8 @@ def evaluate_policy(
+             deterministic=deterministic,
+         )
+         new_observations, rewards, dones, infos = env.step(actions.flatten())
+-        if current_step >= 64:
+-            reversal_rewards += rewards > 0
+         current_rewards += rewards
+         current_lengths += 1
+-        current_step += 1
+         for i in range(n_envs):
+             if episode_counts[i] < episode_count_targets[i]:
+                 # unpack values so that the callback can access the local variables
+@@ -383,18 +374,14 @@ def evaluate_policy(
+                             # has been wrapped with it. Use those rewards instead.
+                             episode_rewards.append(info["episode"]["r"])
+                             episode_lengths.append(info["episode"]["l"])
+-                            episode_reversal_rewards.append(reversal_rewards[i])
+                             # Only increment at the real end of an episode
+                             episode_counts[i] += 1
+                     else:
+                         episode_rewards.append(current_rewards[i])
+-                        episode_reversal_rewards.append(reversal_rewards[i])
+                         episode_lengths.append(current_lengths[i])
+                         episode_counts[i] += 1
+                     current_rewards[i] = 0
+-                    reversal_rewards[i] = 0
+                     current_lengths[i] = 0
+-                    current_step = 0
+                     num_steps2goal.append(info["steps"])
+         rollout_buffer.add(
+             observations,
+@@ -414,12 +401,11 @@ def evaluate_policy(
+     average_values = df.mean(axis=0, skipna=True).values
+     mean_reward = np.mean(episode_rewards)
+     std_reward = np.std(episode_rewards)
+-
+     if reward_threshold is not None:
+         assert mean_reward > reward_threshold, (
+             "Mean reward below threshold: "
+             f"{mean_reward:.2f} < {reward_threshold:.2f}"
+         )
+     if return_episode_rewards:
+-        return episode_rewards, episode_lengths, average_values, episode_reversal_rewards
+-    return mean_reward, std_reward
++        return episode_rewards, episode_lengths, average_values
++    return mean_reward, std_reward
+\ No newline at end of file
+diff --git a/utils/__pycache__/misc.cpython-310.pyc b/utils/__pycache__/misc.cpython-310.pyc
+index 12a60ec..fd56ebf 100644
+Binary files a/utils/__pycache__/misc.cpython-310.pyc and b/utils/__pycache__/misc.cpython-310.pyc differ

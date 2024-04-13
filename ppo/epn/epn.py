@@ -507,6 +507,7 @@ class EPNPPO(OnPolicyAlgorithm):
                     "time/total_timesteps", self.num_timesteps, exclude="tensorboard"
                 )
                 self.logger.dump(step=self.num_timesteps)
+                print(self.num_timesteps)
 
             self.train()
 

@@ -1,0 +1,42 @@
+diff --git a/envs/__pycache__/__init__.cpython-310.pyc b/envs/__pycache__/__init__.cpython-310.pyc
+index a7a16a4..5468326 100644
+Binary files a/envs/__pycache__/__init__.cpython-310.pyc and b/envs/__pycache__/__init__.cpython-310.pyc differ
+diff --git a/envs/__pycache__/radial_arm_maze.cpython-310.pyc b/envs/__pycache__/radial_arm_maze.cpython-310.pyc
+index 9f768db..15380e8 100644
+Binary files a/envs/__pycache__/radial_arm_maze.cpython-310.pyc and b/envs/__pycache__/radial_arm_maze.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/__init__.cpython-310.pyc b/ppo/epn/__pycache__/__init__.cpython-310.pyc
+index 95c712c..41b9609 100644
+Binary files a/ppo/epn/__pycache__/__init__.cpython-310.pyc and b/ppo/epn/__pycache__/__init__.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/buffers.cpython-310.pyc b/ppo/epn/__pycache__/buffers.cpython-310.pyc
+index 58baaa6..3ad924d 100644
+Binary files a/ppo/epn/__pycache__/buffers.cpython-310.pyc and b/ppo/epn/__pycache__/buffers.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/callbacks.cpython-310.pyc b/ppo/epn/__pycache__/callbacks.cpython-310.pyc
+index 30ca5f4..3be2fe4 100644
+Binary files a/ppo/epn/__pycache__/callbacks.cpython-310.pyc and b/ppo/epn/__pycache__/callbacks.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/epn.cpython-310.pyc b/ppo/epn/__pycache__/epn.cpython-310.pyc
+index 2b1236c..0886d22 100644
+Binary files a/ppo/epn/__pycache__/epn.cpython-310.pyc and b/ppo/epn/__pycache__/epn.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/model.cpython-310.pyc b/ppo/epn/__pycache__/model.cpython-310.pyc
+index 449d40c..187cdfb 100644
+Binary files a/ppo/epn/__pycache__/model.cpython-310.pyc and b/ppo/epn/__pycache__/model.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/policies.cpython-310.pyc b/ppo/epn/__pycache__/policies.cpython-310.pyc
+index 4bbc1e0..86fd12a 100644
+Binary files a/ppo/epn/__pycache__/policies.cpython-310.pyc and b/ppo/epn/__pycache__/policies.cpython-310.pyc differ
+diff --git a/ppo/epn/__pycache__/type_aliases.cpython-310.pyc b/ppo/epn/__pycache__/type_aliases.cpython-310.pyc
+index 5d755de..04eb339 100644
+Binary files a/ppo/epn/__pycache__/type_aliases.cpython-310.pyc and b/ppo/epn/__pycache__/type_aliases.cpython-310.pyc differ
+diff --git a/ppo/epn/epn.py b/ppo/epn/epn.py
+index e013853..aec2f1d 100644
+--- a/ppo/epn/epn.py
++++ b/ppo/epn/epn.py
+@@ -507,6 +507,7 @@ class EPNPPO(OnPolicyAlgorithm):
+                     "time/total_timesteps", self.num_timesteps, exclude="tensorboard"
+                 )
+                 self.logger.dump(step=self.num_timesteps)
++                print(self.num_timesteps)
+ 
+             self.train()
+ 
+diff --git a/utils/__pycache__/misc.cpython-310.pyc b/utils/__pycache__/misc.cpython-310.pyc
+index 12a60ec..fd56ebf 100644
+Binary files a/utils/__pycache__/misc.cpython-310.pyc and b/utils/__pycache__/misc.cpython-310.pyc differ
