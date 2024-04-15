@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J ram_4
+#SBATCH -J small
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 1
