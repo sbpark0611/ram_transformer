@@ -13,33 +13,23 @@ class EPN(nn.Module):
         num_heads: int = 1,
         hidden_size: int = 64,
         num_iterations: int = 1,
-        ffn_act_ftn: str = 'relu',
-        alpha: float = 1.0,
-        beta: float = 1.0,
-        dropout: float = 0.0,
-        reward_input: bool = False,
     ):
         super(EPN, self).__init__()
         self.state_embedding = nn.Embedding(num_labels + 1, embedding_size)
         self.action_embedding = nn.Embedding(num_actions + 1, embedding_size)
-        self.planner = Planner(embedding_size, num_heads, num_iterations, ffn_act_ftn=ffn_act_ftn, alpha=alpha, beta=beta, dropout=dropout, reward_input=reward_input)
-        if ffn_act_ftn != "nmda":
-            act_nn = _act_fns[ffn_act_ftn]
-        else:
-            act_nn = NMDA(alpha, beta)
+        self.planner = Planner(embedding_size, num_heads, num_iterations)
         self.planner_mlp = nn.Sequential(
             nn.Linear(
                 self.planner.embedding_size + embedding_size, self.planner.hidden_size
             ),
-            act_nn,
+            nn.ReLU(),
             nn.Linear(self.planner.hidden_size, self.planner.embedding_size),
         )
 
         self.feature = nn.Sequential(
             nn.Linear(embedding_size * 2 + self.planner.embedding_size, hidden_size),
-            act_nn,
+            nn.ReLU(),
         )
-        self.reward_input = reward_input
 
     def forward(self, memory, obs):
         states = self.state_embedding(memory["position"])
@@ -48,11 +38,8 @@ class EPN(nn.Module):
         goals = goal.unsqueeze(1).expand(-1, fixed_num_steps, -1)
         actions = self.action_embedding(memory["prev_action"])
         prev_states = self.state_embedding(memory["prev_position"])
-        if self.reward_input:
-            reward = memory["reward"].float().reshape(-1, fixed_num_steps, 1)
-            episodic_storage = torch.concat((states, actions, prev_states, goals, reward), dim=-1)
-        else:
-            episodic_storage = torch.concat((states, actions, prev_states, goals), dim=-1)
+
+        episodic_storage = torch.concat((states, actions, prev_states, goals), dim=-1)
 
         belief_state = self.planner(episodic_storage)
 
@@ -78,40 +65,13 @@ class Planner(nn.Module):
         ffn_act_ftn="nmda", 
         alpha=1.0, 
         beta=1.0, 
-        dropout=0,
-        reward_input=False,
+        dropout=0
     ):
         super(Planner, self).__init__()
+        self.embedding_size = 4 * embedding_size
+        self.num_heads = num_heads
+        self.hidden_size = 16 * embedding_size
         self.num_iterations = num_iterations
-        self.planner = nn.ModuleList(
-            [TransformerBlock(embedding_size, num_heads, ffn_act_ftn, alpha, beta, dropout, reward_input) for _ in range(self.num_iterations)]
-        )
-        self.embedding_size = 4 * embedding_size + 1 if reward_input else 4 * embedding_size
-        self.num_heads = num_heads
-        self.hidden_size = 16 * embedding_size
-        self.ln_f = nn.LayerNorm(self.embedding_size)
-
-    def forward(self, x):
-        for p in self.planner:
-            x = p(x)
-        return self.ln_f(x)
-    
-
-class TransformerBlock(nn.Module):
-    def __init__(
-        self, 
-        embedding_size, 
-        num_heads, 
-        ffn_act_ftn="nmda", 
-        alpha=1.0, 
-        beta=1.0, 
-        dropout=0,
-        reward_input=False,
-    ):
-        super(TransformerBlock, self).__init__()
-        self.embedding_size = 4 * embedding_size + 1 if reward_input else 4 * embedding_size
-        self.num_heads = num_heads
-        self.hidden_size = 16 * embedding_size
         self.ln_1 = nn.LayerNorm(self.embedding_size)
         self.self_attn = nn.MultiheadAttention(
             self.embedding_size, num_heads, batch_first=True
@@ -129,13 +89,15 @@ class TransformerBlock(nn.Module):
         )
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
+        self.ln_f = nn.LayerNorm(self.embedding_size)
 
     def forward(self, x):
-        _x = self.ln_1(x)
-        attn_output, _ = self.self_attn(_x, _x, _x)
-        x = x + self.dropout1(attn_output)
-        x = x + self.dropout2(self.mlp(self.ln_2(x)))
-        return x
+        for _ in range(self.num_iterations):
+            _x = self.ln_1(x)
+            attn_output, _ = self.self_attn(_x, _x, _x)
+            x = x + self.dropout1(attn_output)
+            x = x + self.dropout2(self.mlp(self.ln_2(x)))
+        return self.ln_f(x)
 
 
 class NMDA(nn.Module):
